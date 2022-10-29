@@ -38,7 +38,7 @@ func helloPubSub(ctx context.Context, e event.Event) error {
 	if err != nil {
 		return fmt.Errorf("error")
 	}
-	is := cclient.Instances.List(os.Getenv("PROJECT"),os.Getenv("LOCATION"))
+	is := cclient.Instances.List(os.Getenv("PROJECT"), os.Getenv("LOCATION"))
 	ts, err := is.Do()
 	if err != nil {
 		return fmt.Errorf("error")
@@ -46,7 +46,7 @@ func helloPubSub(ctx context.Context, e event.Event) error {
 	log.Printf("%#v", ts.Items)
 
 	if len(ts.Items) >= 3 {
-		pclient, err := pubsub.NewClient(ctx,os.Getenv("PROJECT"))
+		pclient, err := pubsub.NewClient(ctx, os.Getenv("PROJECT"))
 		if err != nil {
 			return fmt.Errorf("error")
 		}
@@ -62,8 +62,24 @@ func helloPubSub(ctx context.Context, e event.Event) error {
 			return fmt.Errorf("error")
 		}
 		fmt.Println(id)
+		return nil
 	}
 
+	tm := compute.Instance{
+		Zone: os.Getenv("LOCATION"),
+		Disks: []*compute.AttachedDisk{
+			{
+				AutoDelete: true,
+				Boot:       true,
+				DiskSizeGb: 70,
+				Source:     "", //TODO
+			},
+		},
+		Labels: map[string]string{
+			"name": "stable-diffusion",
+		},
+	}
+	fmt.Print(tm)
 
 	// just showing
 	var msg MessagePublishedData
